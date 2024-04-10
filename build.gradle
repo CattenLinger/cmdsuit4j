@@ -1,0 +1,22 @@
+buildscript {
+    ext.mavenPublishUsername = "${System.getenv('NEXUS_USERNAME')}"
+    ext.mavenPublishPassword = "${System.getenv('NEXUS_PASSWORD')}"
+}
+
+plugins {
+
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    group = "net.catten"
+    version = "1.0"
+}
+
+subprojects {
+//    apply plugin: 'java'
+}
+

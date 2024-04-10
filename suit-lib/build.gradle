@@ -1,0 +1,41 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+dependencies {
+    implementation "ch.qos.logback:logback-classic:1.4.14"
+
+//    implementation "io.projectreactor:reactor-core:3.6.4"
+//    implementation "redis.clients:jedis:5.0.0"
+}
+
+group = 'net.catten'
+version = '1.0-SNAPSHOT'
+
+
+//
+// Publication settings
+//
+if (mavenPublishUsername) publishing {
+    def snapshotUrl = 'https://nexus.shinonometn.com/repository/maven-snapshots/'
+    def releaseUrl = 'https://nexus.shinonometn.com/repository/maven-releases/'
+
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'cmdsuit'
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url = version.endsWith('SNAPSHOT') ? snapshotUrl : releaseUrl
+
+            credentials {
+                username = mavenPublishUsername
+                password = mavenPublishPassword
+            }
+        }
+    }
+}

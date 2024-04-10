@@ -1,4 +1,10 @@
 /build
 
+# Some private stuff here :)
+.private.rc
+
+# Temporaly exclude the example
+/suit-example
+
 /.idea
 /.gradle

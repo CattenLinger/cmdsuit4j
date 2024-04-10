@@ -1,0 +1,3 @@
+rootProject.name = 'cmdsuit4j'
+
+include("suit-example", "suit-lib")
