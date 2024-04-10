@@ -10,9 +10,19 @@ dependencies {
 //    implementation "redis.clients:jedis:5.0.0"
 }
 
-group = 'net.catten'
-version = '1.0-SNAPSHOT'
+// If env has PUBLISH=true then it will be a formal version.
+version = ({
+    def suffix = ((System.getenv("PUBLISH") == 'true') ? '' : '-SNAPSHOT')
+    return "1.0$suffix"
+}())
 
+//
+// Make sourceJar
+//
+tasks.register('sourceJar', org.gradle.jvm.tasks.Jar) {
+    classifier 'sources'
+    from sourceSets.main.allJava
+}
 
 //
 // Publication settings
@@ -25,6 +35,8 @@ if (mavenPublishUsername) publishing {
         mavenJava(MavenPublication) {
             artifactId = 'cmdsuit'
             from components.java
+
+            artifact tasks.sourceJar
         }
     }
 
