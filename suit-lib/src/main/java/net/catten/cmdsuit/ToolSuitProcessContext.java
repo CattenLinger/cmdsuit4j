@@ -11,10 +11,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 
@@ -43,8 +40,12 @@ public class ToolSuitProcessContext {
     public synchronized CompletableFuture<Process> start(Executor executor) throws IOException {
         if(process != null) return process.onExit();
         process = builder.buildProcessInternal().start();
-        if(executor == null) return process.onExit();
-        return setupIOMonitorsForProcess(process, executor);
+
+        // Use default executor if no executor given.
+        var e = executor;
+        if(e == null) e = ForkJoinPool.commonPool();
+
+        return setupIOMonitorsForProcess(process, e);
     }
 
     private CompletableFuture<Process> setupIOMonitorsForProcess(Process process, Executor executor) {
