@@ -1,0 +1,6 @@
+#/usr/bin/env bash
+
+[ -f .private.rc ] && source .private.rc || :
+export PUBLISH=true
+
+gradle :suit-lib:publish
