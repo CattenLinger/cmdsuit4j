@@ -16,12 +16,8 @@ version = ({
     return "1.0$suffix"
 }())
 
-//
-// Make sourceJar
-//
-tasks.register('sourceJar', org.gradle.jvm.tasks.Jar) {
-    classifier 'sources'
-    from sourceSets.main.allJava
+java {
+    withSourcesJar()
 }
 
 //
@@ -35,8 +31,6 @@ if (mavenPublishUsername) publishing {
         mavenJava(MavenPublication) {
             artifactId = 'cmdsuit'
             from components.java
-
-            artifact tasks.sourceJar
         }
     }
 
