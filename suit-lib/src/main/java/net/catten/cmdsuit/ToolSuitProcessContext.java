@@ -16,6 +16,8 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 
 /**
+ * ToolSuitProcessContext holds a running process's information. Including the system process, the origin builder
+ * and suit info.
  *
  * @author cattenlinger
  */
@@ -33,10 +35,16 @@ public class ToolSuitProcessContext {
         return builder.getSuit();
     }
 
+    /**
+     * Convenience method to start a process without specifying executor (default to ForkJoinPool.commonPool())
+     */
     public CompletableFuture<Process> start() throws IOException {
         return start(null);
     }
 
+    /**
+     * Start the process. This method is means to be invoked once.
+     */
     public synchronized CompletableFuture<Process> start(Executor executor) throws IOException {
         if(process != null) return process.onExit();
         process = builder.buildProcessInternal().start();
@@ -87,6 +95,9 @@ public class ToolSuitProcessContext {
 
     private Consumer<Message> onStdOutLine = null;
 
+    /**
+     * Set listener when new line produced from stdout.
+     */
     public ToolSuitProcessContext setOnStdOutLine(Consumer<Message> onStdOutLine) {
         this.onStdOutLine = onStdOutLine;
         return this;
@@ -94,19 +105,34 @@ public class ToolSuitProcessContext {
 
     private Consumer<Message> onStdErrLine = null;
 
+    /**
+     * Set listener when new line produced from stderr.
+     */
     public ToolSuitProcessContext setOnStdErrLine(Consumer<Message> onStdErrLine) {
         this.onStdErrLine = onStdErrLine;
         return this;
     }
 
+    /**
+     * Each line of process output, with which source it comes from.
+     *
+     * Source will be "stdout" or "stderr".
+     */
     public static final class Message {
         private final String sourceName;
         private final String line;
 
+        /**
+         * Process line message output source.
+         * "stdout" or "stderr".
+         */
         public String getSourceName() {
             return sourceName;
         }
 
+        /**
+         * The message line origin
+         */
         public String getLine() {
             return line;
         }
@@ -123,7 +149,7 @@ public class ToolSuitProcessContext {
     }
 
     private static class IOMonitor implements Closeable {
-        private final Logger log = LoggerFactory.getLogger(C.LoggerName);
+        private final Logger log = C.getDefaultLogger();
         private final InputStreamReader reader;
 
         public IOMonitor(InputStream inputStream, ToolSuitProcessContext ctx) {
